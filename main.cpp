@@ -1,14 +1,20 @@
 #include <iostream>
 #include <cstring>
+#include <math.h>
 
 using namespace std;
 
 int correctInput();
 void add (int (&heapArray)[101], int &inputTotal);
 void sortArray(int (&heapArray)[101], int value, int index);
+void print(int (&heapArray)[101], int index, int level, int inputTotal)
 
 int main() {
   int heapArray[101];
+  heapArray[0] = 1;
+  /*for (int i = 0; i < 101; i++) {
+    heapArray[i] = NULL;
+    }*/
   int inputTotal = 0;
   bool beenCookingWithThatSauceBoi = true;
   while (beenCookingWithThatSauceBoi == true) {
@@ -19,7 +25,7 @@ int main() {
     }
     // Print out the heap
     else if (option == 2) {
-      
+      print(heapArray, inputTotal);
     }
     // Remove the root (highest value)
     else if (option == 3) {
@@ -87,12 +93,13 @@ void add (int (&heapArray)[101], int &inputTotal) {
     }
     int values[101];
     for (int i = inputTotal; i < (inputTotal + inputNums); i++) {
-      cin >> values[i];
+      cin >> values[i+1];
       cin.get();
     }
     inputTotal+= inputNums;
-    for (int i = 1; i < inputTotal; i++) {
-      sort(heapArray, values[i], i);
+    for (int i = 1; i < inputTotal+1; i++) {
+      heapArray[i] = values[i];
+      sortArray(heapArray, values[i], i);
     }
     cout << "here" << endl;
   }
@@ -105,5 +112,17 @@ void add (int (&heapArray)[101], int &inputTotal) {
 }
 
 void sortArray(int (&heapArray)[101], int value, int index) {
+  int parentIndex = floor(index/2);
+  if (value > heapArray[parentIndex] && parentIndex != 0) {
+    int temp = heapArray[parentIndex];
+    heapArray[parentIndex] = value;
+    heapArray[index] = temp;
+    sortArray(heapArray, value, parentIndex);
+  }
+}
 
+void print(int (&heapArray)[101], int index, int level, int inputTotal) {
+  if () {
+
+  }
 }
