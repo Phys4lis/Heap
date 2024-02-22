@@ -7,7 +7,7 @@ using namespace std;
 int correctInput();
 void add (int (&heapArray)[101], int &inputTotal);
 void sortArray(int (&heapArray)[101], int value, int index);
-void print(int (&heapArray)[101], int index, int level, int inputTotal)
+void print(int (&heapArray)[101], int index, int level, int end);
 
 int main() {
   int heapArray[101];
@@ -25,7 +25,10 @@ int main() {
     }
     // Print out the heap
     else if (option == 2) {
-      print(heapArray, inputTotal);
+      int index;
+      int level;
+      int end;
+      print(heapArray, index, level, end);
     }
     // Remove the root (highest value)
     else if (option == 3) {
@@ -121,8 +124,15 @@ void sortArray(int (&heapArray)[101], int value, int index) {
   }
 }
 
-void print(int (&heapArray)[101], int index, int level, int inputTotal) {
-  if () {
-
+void print(int (&heapArray)[101], int index, int level, int end) {
+  if ((index*2) + 1 < end) {
+    print(heapArray, (index*2) + 1, level + 1, end);
+  }
+  for (int i = 0; i < level; i++) {
+    cout << '\t';
+  }
+  cout << heapArray[index] << endl;
+  if ((index*2) < end) {
+    print(heapArray, (index*2), level + 1, end);
   }
 }
