@@ -7,15 +7,17 @@ using namespace std;
 int correctInput();
 void add (int (&heapArray)[101], int &inputTotal);
 void sortArray(int (&heapArray)[101], int value, int index);
-void print(int (&heapArray)[101], int index, int level, int end);
+void print(int (&heapArray)[101], int index, int level, int inputTotal);
+void remove(int (&heapArray)[101], int value, int index);
 
 int main() {
   int heapArray[101];
   heapArray[0] = 1;
-  /*for (int i = 0; i < 101; i++) {
-    heapArray[i] = NULL;
-    }*/
+  
   int inputTotal = 0;
+  int index;
+  int level;
+  
   bool beenCookingWithThatSauceBoi = true;
   while (beenCookingWithThatSauceBoi == true) {
     int option = correctInput();
@@ -25,14 +27,17 @@ int main() {
     }
     // Print out the heap
     else if (option == 2) {
-      int index;
-      int level;
-      int end;
-      print(heapArray, index, level, end);
+      index = 1;
+      level = 0;
+      print(heapArray, index, level, inputTotal+1);
     }
     // Remove the root (highest value)
     else if (option == 3) {
-      
+      cout << heapArray[1] << endl;
+      heapArray[1] = heapArray[inputTotal + 1];
+      inputTotal--;
+      remove(heapArray, heapArray[1], 1);
+      cout << "Successfully deleted root of tree" << endl << endl;
     }
     // Remove all 
     else if (option == 4) {
@@ -75,45 +80,46 @@ int correctInput() {
 }
 
 void add (int (&heapArray)[101], int &inputTotal) {
-  cout << "CONSOLE or FILE? (uppercase)" << endl;
-  char input[10];
-  cin.get(input, 10);
-  cin.get();
   // Input through console
-  if (strcmp(input, "CONSOLE") == 0) {
-    int inputNums;
-    bool sizeCheck = true;
-    while (sizeCheck == true) {
-      cout << "How many numbers are you adding?" << endl;
-      cin >> inputNums;
-      cin.get();
-      if (inputTotal + inputNums > 100) {
-	cout << "There isn't enough space to add that many numbers!" << endl;
+  bool inputMethodLoop = true;
+  while (inputMethodLoop == true) {
+    cout << "CONSOLE or FILE? (uppercase)" << endl;
+    char input[10];
+    cin.get(input, 10);
+    cin.get();
+    if (strcmp(input, "CONSOLE") == 0) {
+      int inputNums;
+      bool sizeCheck = true;
+      while (sizeCheck == true) {
+	cout << "How many numbers are you adding?" << endl;
+	cin >> inputNums;
+	cin.get();
+	if (inputTotal + inputNums > 100) {
+	  cout << "There isn't enough space to add that many numbers!" << endl;
+	}
+	else {
+	  sizeCheck = false;
+	}
       }
-      else {
-	sizeCheck = false;
+      for (int i = inputTotal; i < (inputTotal + inputNums); i++) {
+	cin >> heapArray[i+1];
+	cin.get();
+	sortArray(heapArray, heapArray[i+1], i+1);
       }
+      inputTotal+= inputNums;
+      /*for (int i = 0; i < inputTotal; i++) {
+	cout << heapArray[i+1];
+      }*/
+      inputMethodLoop = false;
     }
-    int values[101];
-    for (int i = inputTotal; i < (inputTotal + inputNums); i++) {
-      cin >> values[i+1];
-      cin.get();
+    else if (strcmp(input, "FILE") == 0) {
+      inputMethodLoop = false;
     }
-    inputTotal+= inputNums;
-    for (int i = 1; i < inputTotal+1; i++) {
-      heapArray[i] = values[i];
-      sortArray(heapArray, values[i], i);
+    else {
+      cout << "That is not one of the two options!" << endl << endl;
     }
-    cout << "here" << endl;
-  }
-  else if (strcmp(input, "FILE") == 0) {
-    
-  }
-  else {
-    cout << "That is not one of the two options!" << endl;
   }
 }
-
 void sortArray(int (&heapArray)[101], int value, int index) {
   int parentIndex = floor(index/2);
   if (value > heapArray[parentIndex] && parentIndex != 0) {
@@ -124,15 +130,54 @@ void sortArray(int (&heapArray)[101], int value, int index) {
   }
 }
 
-void print(int (&heapArray)[101], int index, int level, int end) {
-  if ((index*2) + 1 < end) {
-    print(heapArray, (index*2) + 1, level + 1, end);
+void print(int (&heapArray)[101], int index, int level, int inputTotal) {
+  if ((index*2) + 1 < inputTotal) {
+    print(heapArray, (index*2) + 1, level + 1, inputTotal);
   }
   for (int i = 0; i < level; i++) {
     cout << '\t';
   }
   cout << heapArray[index] << endl;
-  if ((index*2) < end) {
-    print(heapArray, (index*2), level + 1, end);
+  if ((index*2) < inputTotal) {
+    print(heapArray, (index*2), level + 1,  inputTotal);
+  }
+}
+
+void remove(int (&heapArray)[101], int value, int index) {
+  if (heapArray[index*2] > value && heapArray[index*2+1] > value) {
+    int temp;
+    if (heapArray[index*2] > heapArray[index*2+1]) {
+      temp = 1;
+    }
+    else if (heapArray[index*2] < heapArray[index*2+1]) {
+      temp = 2;
+    }
+    else {
+      temp = 1;
+    }
+    if (temp == 1) {
+      int swapTemp = heapArray[index];
+      heapArray[index] = heapArray[index*2];
+      heapArray[index*2] = swapTemp;
+      remove(heapArray, heapArray[index*2], index*2);
+    }
+    else if (temp == 2) {
+      int swapTemp = heapArray[index];
+      heapArray[index] = heapArray[index*2+1];
+      heapArray[index*2+1] = swapTemp;
+      remove(heapArray, heapArray[index*2+1], index*2+1);
+    }
+  }
+  else if (heapArray[index/2] > value && heapArray[(index-1)/2] <= value) {
+    int swapTemp = heapArray[index];
+    heapArray[index] = heapArray[index*2];
+    heapArray[index*2] = swapTemp;
+    remove(heapArray, heapArray[index*2], index*2);  
+  }
+  else if (heapArray[(index-1)/2] > value && heapArray[index/2] <= value) {
+    int swapTemp = heapArray[index];
+    heapArray[index] = heapArray[index*2+1];
+    heapArray[index*2+1] = swapTemp;
+    remove(heapArray, heapArray[index*2+1], index*2+1);
   }
 }
